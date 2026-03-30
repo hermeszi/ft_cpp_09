@@ -8,6 +8,7 @@ class RPN
 {
     private:
         std::stack<int> numStack;
+        bool error;
 
     public:
         RPN();
@@ -17,6 +18,8 @@ class RPN
 
         void processInput(std::string input);
         void performOp(std::string input);
+
+        int getResult() const;
 };
 
 #endif
