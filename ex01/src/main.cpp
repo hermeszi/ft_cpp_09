@@ -6,7 +6,7 @@
 /*   By: myuen <myuen@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 14:53:29 by myuen             #+#    #+#             */
-/*   Updated: 2026/03/30 20:05:28 by myuen            ###   ########.fr       */
+/*   Updated: 2026/03/31 19:01:19 by myuen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int main(int argc, char** argv)
     catch (std::exception &e)
     {
         std::cout << e.what() << std::endl;
+        return 1;
     }
     
     return 0;

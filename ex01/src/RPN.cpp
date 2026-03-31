@@ -104,6 +104,11 @@ void RPN::performOp(std::string input)
         }
         case '/':
         {
+            if (rVal == 0)
+            {
+                this->error = true;
+                return ;
+            }
             result = lVal / rVal;
             break;
         }
