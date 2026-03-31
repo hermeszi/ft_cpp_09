@@ -20,6 +20,7 @@ class RPN
         void performOp(std::string input);
 
         int getResult() const;
+        bool hasError() const;
 };
 
 #endif

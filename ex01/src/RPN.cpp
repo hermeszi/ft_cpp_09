@@ -130,3 +130,8 @@ int RPN::getResult() const
         throw std::runtime_error("Error: mutated expression");
     return numStack.top();
 }
+
+bool RPN::hasError() const
+{
+    return this->error;
+}

@@ -6,7 +6,7 @@
 /*   By: myuen <myuen@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 14:53:29 by myuen             #+#    #+#             */
-/*   Updated: 2026/03/31 19:01:19 by myuen            ###   ########.fr       */
+/*   Updated: 2026/03/31 19:11:01 by myuen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ int main(int argc, char** argv)
         std::string token;
         while (ss >> token)
             rpn.processInput(token);
-        std::cout << rpn.getResult() << std::endl;
+        if (rpn.hasError())
+            std::cerr << "Error" << std::endl;
+        else
+            std::cout << rpn.getResult() << std::endl;
     }
     catch (std::exception &e)
     {
