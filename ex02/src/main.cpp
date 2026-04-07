@@ -58,10 +58,8 @@ int main(int argc, char **argv)
 {
     if (argc < 2)
     {
-        std::cerr << "Error\n";
-        std::cerr << "Example:\t";
-        std::cerr << "./PmergeMe 3 5 9 7 4";
-        std::cerr << std::endl;
+        std::cerr << "Error\n" << "Example:\t";
+        std::cerr << "./PmergeMe 3 5 9 7 4" << std::endl;
         return 1;
     }
 
@@ -75,8 +73,6 @@ int main(int argc, char **argv)
     try
     {
         std::cout << input << std::endl;
-        // PmergeMe sorter(input);
-        // sorter.run();
     }
     catch (const std::exception &e)
     {
