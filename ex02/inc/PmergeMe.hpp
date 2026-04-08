@@ -20,13 +20,19 @@ private:
     std::vector<int> input;
     std::vector<int> sortV;
     std::deque<int>  sortD;
+    
     struct pair
     {
         int alpha;
         int beta;
     };
-    std::vector<int> FJSort(std::vector<PmergeMe::pair> &pairs);
+
+    template <typename Container>
+    Container FJSort(std::vector<PmergeMe::pair> &receivedPairs);
+
     PmergeMe::pair mkPair(int a, int b);
+    std::vector<int> insertOrder(size_t n);
     void sortVector();
+    void sortDeque();
 };
 #endif

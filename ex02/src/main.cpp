@@ -5,22 +5,12 @@
 #include <limits>
 #include "PmergeMe.hpp"
 
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
+template <typename Container>
+static bool isSorted(const Container& c)
 {
-    os << "[";
-    for (size_t i = 0; i < v.size(); ++i)
+    for (size_t i = 1; i < c.size(); ++i)
     {
-        os << v[i] << (i != v.size() - 1 ? ", " : "");
-    }
-    return os << "]";
-}
-
-static bool isSorted(const std::vector<int>& v)
-{
-    for (size_t i = 1; i < v.size(); ++i)
-    {
-        if (v[i] < v[i - 1])
+        if (c[i] < c[i - 1])
             return false;
     }
     return true;
@@ -82,18 +72,17 @@ int main(int argc, char **argv)
 
     try
     {
-        std::cout << input << std::endl;
         PmergeMe sorter(input);
         sorter.run();
-        std::cout << sorter.getSortV() << std::endl;
-        if (!isSorted(sorter.getSortV()))
+        
+        if (!isSorted(sorter.getSortV()) || !isSorted(sorter.getSortD()))
         {
-            std::cerr << "Error: Vector is not sorted" << std::endl;
+            std::cerr << "Error: One or both containers are not sorted" << std::endl;
             return 1;
         }
         else
         {
-            std::cout << "Vector is sorted successfully" << std::endl;
+            std::cout << "Vector and deque are sorted successfully" << std::endl;
         }
     }
     catch (const std::exception &e)
