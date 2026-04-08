@@ -25,22 +25,20 @@ PmergeMe & PmergeMe::operator=(PmergeMe const &rhs)
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 {
-    os << "[";
     for (size_t i = 0; i < v.size(); ++i)
     {
         os << v[i] << (i != v.size() - 1 ? ", " : "");
     }
-    return os << "]";
+    return os;
 }
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::deque<T>& d)
 {
-    os << "[";
     for (size_t i = 0; i < d.size(); ++i)
     {                                           
         os << d[i] << (i != d.size() - 1 ? ", " : "");
     }
-    return os << "]";
+    return os;
 }
 
 int PmergeMe::run ()
@@ -54,17 +52,20 @@ int PmergeMe::run ()
             return 1;
         }
 
-        std::cout << "Before :" << input << std::endl;
+        this->insertOrder = this->generateOrder(size);
+        //std::cout << "Insertion order: " << this->insertOrder << std::endl;
+
+        std::cout << "Before : " << input << std::endl;
         
         clock_t startV = clock();
         this->sortVector();
         clock_t endV = clock();
-        std::cout << "After (vector): " << sortV << std::endl;
+        std::cout << "After  : " << sortV << std::endl;
 
         clock_t startD = clock();
         this->sortDeque(); 
         clock_t endD = clock();
-        std::cout << "After (deque) : " << sortD << std::endl;
+        //std::cout << "After (deque) : " << sortD << std::endl;
 
         double timeV = (static_cast<double>(endV - startV) / CLOCKS_PER_SEC) * MILLION;
         double timeD = (static_cast<double>(endD - startD) / CLOCKS_PER_SEC) * MILLION;
@@ -103,35 +104,35 @@ PmergeMe::pair PmergeMe::mkPair(int a, int b)
 static std::vector<size_t> generateJacobsthal(size_t n)
 {
     std::vector<size_t> chain;
-    if (n == 0)
+    chain.push_back(0);
+    chain.push_back(1);
+    
+    while (chain.back() < n)
     {
-        chain.push_back(0);
-        chain.push_back(1);
-    }
-    else
-    {
-        chain = generateJacobsthal(n - 1);
         //J(n) = J(n-1) + 2 * J(n-2)
         chain.push_back(chain[chain.size() - 1] + (2 * chain[chain.size() - 2]));
     }
     return chain;
 }
 
-std::vector<int> PmergeMe::insertOrder(size_t n)
+std::vector<int> PmergeMe::generateOrder(size_t n)
 {
     std::vector<size_t> jacobsthal = generateJacobsthal(n);
-    std::cout << "Jacobsthal sequence: " << jacobsthal << std::endl;
+    //std::cout << "Jacobsthal sequence: " << jacobsthal << std::endl;
     std::vector<int> order;
-    order.push_back(0); // start with 0, which is the first element of the pend list
-
-    for (size_t i = 2; i < jacobsthal.size(); ++i)
+    order.push_back(0);
+    if (n > 1) order.push_back(1);
+    for (size_t i = 3; i < jacobsthal.size(); ++i)
     {
-        size_t temp = jacobsthal[i];
-        order.push_back(temp);
-        if (jacobsthal[i] > n)
-            break;
-        if (temp > 0 && temp > jacobsthal[i - 1])
-            order.push_back(jacobsthal[i] - 1);
+        size_t high = std::min(jacobsthal[i], n - 1);   // if jacobsthal number exceeds n, we only need to go up to n-1
+        size_t low = jacobsthal[i - 1] + 1;             // low starts at the index after the previous jacobsthal number, since we want to insert in between the previous and current jacobsthal numbers
+        if (low > n - 1) break;                         // if low exceeds n, we are done
+        for (size_t j = high; j >= low; --j) 
+        {
+            order.push_back(j); 
+            if (j == 0) break;                          // to prevent underflow
+        }
+        if (jacobsthal[i] >= n) break;                  // if jacobsthal number exceeds n, we are done
     }
     return order;
 }
@@ -168,16 +169,31 @@ Container PmergeMe::FJSort(std::vector<PmergeMe::pair> &receivedPairs)
     // 4. recurse: FJSort(new pairs)
     mainChain = FJSort <Container>(newPairs);
 
-    // 5. insert remaining pend elements into mainChain using binary search
-    while (!receivedPairs.empty())
+    // 5. get insert order for pend elements, which is based on Jacobsthal sequence
+    std::vector<int> localOrder;
+    for (size_t i = 0; i < insertOrder.size(); ++i)
+    {
+        if (static_cast<size_t>(insertOrder[i]) < receivedPairs.size())
+            localOrder.push_back(insertOrder[i]);
+    }
+    // 6. insert remaining pend elements into mainChain using binary search
+    while (!localOrder.empty())
     {   
-        std::cout << "testing insertion order:" << this->insertOrder(receivedPairs.size()) << std::endl;
-        PmergeMe::pair currentPair = receivedPairs.front();
-        receivedPairs.erase(receivedPairs.begin());
+        int currentIndex = localOrder.front();
+        localOrder.erase(localOrder.begin());
+        PmergeMe::pair currentPair = receivedPairs.at(currentIndex);
         typename Container::iterator upperBound = std::lower_bound(mainChain.begin(), mainChain.end(), currentPair.alpha);
         typename Container::iterator pos = std::lower_bound(mainChain.begin(), upperBound, currentPair.beta);
         mainChain.insert(pos, currentPair.beta);
     }
+    // while (!receivedPairs.empty())
+    // {   
+    //     PmergeMe::pair currentPair = receivedPairs.front();
+    //     receivedPairs.erase(receivedPairs.begin());
+    //     typename Container::iterator upperBound = std::lower_bound(mainChain.begin(), mainChain.end(), currentPair.alpha);
+    //     typename Container::iterator pos = std::lower_bound(mainChain.begin(), upperBound, currentPair.beta);
+    //     mainChain.insert(pos, currentPair.beta);
+    // }
 
     // 6. if remaining exists (from the starting pairing), insert it into mainChain using binary search
     if (hasLaggard)

@@ -18,6 +18,7 @@ public:
     const std::deque<int>& getSortD() const;
 private:
     std::vector<int> input;
+    std::vector<int> insertOrder;
     std::vector<int> sortV;
     std::deque<int>  sortD;
     
@@ -31,8 +32,9 @@ private:
     Container FJSort(std::vector<PmergeMe::pair> &receivedPairs);
 
     PmergeMe::pair mkPair(int a, int b);
-    std::vector<int> insertOrder(size_t n);
+    std::vector<int> generateOrder(size_t n);
     void sortVector();
     void sortDeque();
 };
+
 #endif
