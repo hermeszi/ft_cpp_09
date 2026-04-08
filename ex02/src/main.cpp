@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include <limits>
-//#include "PmergeMe.hpp"
+#include "PmergeMe.hpp"
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
@@ -14,6 +14,16 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
         os << v[i] << (i != v.size() - 1 ? ", " : "");
     }
     return os << "]";
+}
+
+static bool isSorted(const std::vector<int>& v)
+{
+    for (size_t i = 1; i < v.size(); ++i)
+    {
+        if (v[i] < v[i - 1])
+            return false;
+    }
+    return true;
 }
 
 static bool isPositiveInt(const std::string &s)
@@ -73,6 +83,18 @@ int main(int argc, char **argv)
     try
     {
         std::cout << input << std::endl;
+        PmergeMe sorter(input);
+        sorter.run();
+        std::cout << sorter.getSortV() << std::endl;
+        if (!isSorted(sorter.getSortV()))
+        {
+            std::cerr << "Error: Vector is not sorted" << std::endl;
+            return 1;
+        }
+        else
+        {
+            std::cout << "Vector is sorted successfully" << std::endl;
+        }
     }
     catch (const std::exception &e)
     {

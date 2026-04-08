@@ -7,21 +7,26 @@
 class PmergeMe
 {
 public:
-    PmergeMe() : vec_(), deq_(){}
-    PmergeMe(const std::vector<int>& input) : vec_(input), deq_(input.begin(), input.end()) {}
+    PmergeMe() : input(), sortV(), sortD(){}
+    PmergeMe(const std::vector<int>& input) : input(input), sortV(), sortD() {}
     PmergeMe(PmergeMe const &src);
     PmergeMe &operator=(PmergeMe const &rhs);
     ~PmergeMe(){};
 
+    int run ();
+    const std::vector<int>& getSortV() const;
+    const std::deque<int>& getSortD() const;
 private:
-    std::vector<int> vec_;
-    std::deque<int>  deq_;
+    std::vector<int> input;
+    std::vector<int> sortV;
+    std::deque<int>  sortD;
     struct pair
     {
-        std::vector<int> beta;
-        int alpha; 
+        int alpha;
+        int beta;
     };
-    
+    std::vector<int> FJSort(std::vector<PmergeMe::pair> &pairs);
+    PmergeMe::pair mkPair(int a, int b);
     void sortVector();
 };
 #endif
